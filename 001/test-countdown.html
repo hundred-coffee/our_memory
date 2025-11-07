@@ -3,160 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>倒计时测试 - 生日礼物</title>
+    <title>倒计时测试</title>
     <style>
         body {
-            margin: 0;
-            padding: 2rem;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            color: white;
-            font-family: 'Arial', sans-serif;
-            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
         }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-        }
-        
-        h1 {
-            color: #FF69B4;
-            margin-bottom: 2rem;
-        }
-        
-        .test-section {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 2rem;
-            border-radius: 15px;
-            margin: 2rem 0;
-            backdrop-filter: blur(10px);
-        }
-        
-        button {
-            background: linear-gradient(45deg, #FF69B4, #FF1493);
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 25px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            margin: 0.5rem;
-            transition: all 0.3s ease;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(255, 105, 180, 0.3);
-        }
-        
-        .demo-area {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 2rem;
+        .test-container {
+            background: white;
+            padding: 20px;
             border-radius: 10px;
-            margin: 2rem 0;
-            min-height: 200px;
+            margin: 10px 0;
+        }
+        .countdown {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        .info {
+            color: #666;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎂 倒计时效果演示</h1>
-        
-        <div class="test-section">
-            <h2>倒计时结束后的效果</h2>
-            <p>当倒计时归零时，会发生以下精彩效果：</p>
-            
-            <div class="demo-area" id="demo-area">
-                <p>点击下方按钮查看效果</p>
-            </div>
-            
-            <button onclick="triggerCountdownEnd()">🎉 触发倒计时结束效果</button>
-            <button onclick="resetDemo()">🔄 重置演示</button>
-        </div>
-        
-        <div class="test-section">
-            <h2>实际倒计时状态</h2>
-            <p>当前倒计时到明天（11月8日）0点：</p>
-            <div id="actual-countdown" style="font-size: 1.5rem; margin: 1rem 0;"></div>
-        </div>
-        
-        <div class="test-section">
-            <h2>效果说明</h2>
-            <ul style="text-align: left; max-width: 600px; margin: 0 auto;">
-                <li>🎆 200个彩色粒子爆炸效果</li>
-                <li>💖 100个大型爱心漂浮动画</li>
-                <li>🎨 背景颜色渐变变化</li>
-                <li>💌 随机生日祝福消息弹出</li>
-                <li>🕯️ 自动点亮生日蜡烛</li>
-                <li>✨ 倒计时标题变为"生日快乐"</li>
-            </ul>
-        </div>
+    <h1>倒计时测试页面</h1>
+    
+    <div class="test-container">
+        <h2>当前时间</h2>
+        <div id="current-time" class="countdown"></div>
+    </div>
+    
+    <div class="test-container">
+        <h2>生日日期</h2>
+        <div id="birthday-date" class="countdown"></div>
+    </div>
+    
+    <div class="test-container">
+        <h2>倒计时</h2>
+        <div id="countdown" class="countdown"></div>
+        <div class="info">距离2025年11月8日还有：</div>
+    </div>
+    
+    <div class="test-container">
+        <h2>调试信息</h2>
+        <div id="debug-info" class="info"></div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script>
-        // 显示实际倒计时
-        function updateActualCountdown() {
-            const birthday = new Date(2025, 10, 8, 0, 0, 0);
-            const now = new Date().getTime();
-            const distance = birthday.getTime() - now;
+        // 设置生日日期：2025年11月8日
+        const birthday = new Date(2025, 10, 8, 0, 0, 0);
+        
+        function updateTest() {
+            const now = new Date();
+            const distance = birthday.getTime() - now.getTime();
             
-            if (distance <= 0) {
-                document.getElementById('actual-countdown').innerHTML = '🎉 生日快乐！ 🎉';
-                return;
-            }
+            // 显示当前时间
+            document.getElementById('current-time').textContent = now.toString();
             
+            // 显示生日日期
+            document.getElementById('birthday-date').textContent = birthday.toString();
+            
+            // 计算倒计时
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
             
-            document.getElementById('actual-countdown').innerHTML = 
+            // 显示倒计时
+            document.getElementById('countdown').textContent = 
                 `${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒`;
-        }
-        
-        // 触发倒计时结束效果
-        function triggerCountdownEnd() {
-            const demoArea = document.getElementById('demo-area');
-            demoArea.innerHTML = '<p>🎆 正在展示生日庆祝效果...</p>';
             
-            // 模拟倒计时结束效果
-            setTimeout(() => {
-                demoArea.innerHTML = `
-                    <div style="color: #FF69B4; font-size: 2rem; font-weight: bold;">
-                        🎉 生日快乐！ 🎉
-                    </div>
-                    <p style="margin-top: 1rem;">倒计时已结束，正在展示庆祝效果：</p>
-                    <ul style="text-align: left; margin-top: 1rem;">
-                        <li>✅ 粒子爆炸效果已触发</li>
-                        <li>✅ 爱心漂浮动画已启动</li>
-                        <li>✅ 背景颜色渐变中</li>
-                        <li>✅ 生日祝福消息已显示</li>
-                        <li>✅ 蜡烛自动点亮</li>
-                    </ul>
-                `;
-                
-                // 添加一些简单的动画效果
-                anime({
-                    targets: demoArea,
-                    scale: [0.9, 1],
-                    backgroundColor: ['rgba(255,105,180,0.1)', 'rgba(255,105,180,0.2)'],
-                    duration: 1000,
-                    easing: 'easeOutElastic(1, .8)'
-                });
-                
-            }, 1000);
+            // 调试信息
+            document.getElementById('debug-info').innerHTML = `
+                <p>当前时间戳: ${now.getTime()}</p>
+                <p>生日时间戳: ${birthday.getTime()}</p>
+                <p>时间差(毫秒): ${distance}</p>
+                <p>计算天数: ${days}</p>
+                <p>生日日期对象: ${JSON.stringify({
+                    year: birthday.getFullYear(),
+                    month: birthday.getMonth(),
+                    date: birthday.getDate(),
+                    hours: birthday.getHours(),
+                    minutes: birthday.getMinutes(),
+                    seconds: birthday.getSeconds()
+                })}</p>
+            `;
         }
         
-        // 重置演示
-        function resetDemo() {
-            document.getElementById('demo-area').innerHTML = '<p>点击上方按钮查看效果</p>';
-        }
-        
-        // 初始化
-        updateActualCountdown();
-        setInterval(updateActualCountdown, 1000);
+        // 每秒更新一次
+        updateTest();
+        setInterval(updateTest, 1000);
     </script>
 </body>
 </html>

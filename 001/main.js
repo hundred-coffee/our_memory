@@ -162,32 +162,43 @@ class PageAnimator {
     }
     
     startCountdown() {
-        // Set birthday date to November 8th, 2025
+        // ========== 倒计时计算逻辑 ==========
+        // 设置目标生日日期：2025年11月8日
+        // 注意：JavaScript中月份是0索引的（0=1月，10=11月）
         const birthday = new Date(2025, 10, 8, 0, 0, 0); // Month is 0-indexed (10 = November)
         console.log('Birthday date:', birthday);
         console.log('Current date:', new Date());
         
         const updateCountdown = () => {
+            // 获取当前时间戳（毫秒）
             const now = new Date().getTime();
+            // 计算距离生日的时间差（毫秒）
             const distance = birthday.getTime() - now;
             
+            // 如果倒计时结束，显示生日庆祝
             if (distance <= 0) {
                 // Countdown finished - show birthday celebration
                 this.showBirthdayCelebration();
                 return;
             }
             
+            // ========== 时间差分解计算 ==========
+            // 计算天数：总毫秒数 ÷ (1000毫秒 × 60秒 × 60分钟 × 24小时)
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            // 计算小时数：剩余毫秒数 ÷ (1000毫秒 × 60秒 × 60分钟)
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            // 计算分钟数：剩余毫秒数 ÷ (1000毫秒 × 60秒)
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            // 计算秒数：剩余毫秒数 ÷ 1000毫秒
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
             
+            // 更新倒计时显示（两位数格式）
             document.getElementById('days').textContent = days.toString().padStart(2, '0');
             document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
             document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
             document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
             
-            // Animate digit changes
+            // 数字变化动画效果
             anime({
                 targets: '.countdown-digit',
                 scale: [1.1, 1],
@@ -196,6 +207,7 @@ class PageAnimator {
             });
         };
         
+        // 初始化倒计时并每秒更新一次
         updateCountdown();
         setInterval(updateCountdown, 1000);
     }
