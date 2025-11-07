@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>回忆相册 - 生日快乐！</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-pink: #E8B4B8;
+            --soft-pink: #F7E7E6;
+            --cream-white: #FFF8F3;
+            --deep-rose: #C85A6F;
+            --gold: #D4AF37;
+            --text-dark: #333333;
+            --text-light: #666666;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--soft-pink), var(--cream-white));
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* 导航栏样式 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--deep-rose);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--deep-rose);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--deep-rose);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* 移动端菜单按钮 */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            cursor: pointer;
+        }
+
+        /* 主要内容区域 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 2rem 2rem;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--deep-rose);
+            text-align: center;
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease 0.5s forwards;
+        }
+
+        /* 回忆相册网格 */
+        .memories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease 0.8s forwards;
+        }
+
+        .memory-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .memory-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .memory-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .memory-card:hover .memory-image {
+            transform: scale(1.05);
+        }
+
+        .memory-info {
+            padding: 1.5rem;
+        }
+
+        .memory-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--deep-rose);
+            margin-bottom: 0.5rem;
+        }
+
+        .memory-date {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .memory-description {
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* 添加回忆表单 */
+        .add-memory-form {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease 1.1s forwards;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-pink);
+            box-shadow: 0 0 0 3px rgba(232, 180, 184, 0.2);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary-pink), var(--deep-rose));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(200, 90, 111, 0.3);
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(200, 90, 111, 0.4);
+        }
+
+        /* 图片放大覆盖层 */
+        .image-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .overlay-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .overlay-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: var(--deep-rose);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: var(--primary-pink);
+        }
+
+        /* 移动端导航菜单 */
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 999;
+            padding: 2rem;
+        }
+
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-nav-links {
+            list-style: none;
+            margin-top: 3rem;
+        }
+
+        .mobile-nav-link {
+            display: block;
+            padding: 1rem 0;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-size: 1.2rem;
+            border-bottom: 1px solid #eee;
+            transition: color 0.3s ease;
+        }
+
+        .mobile-nav-link:hover {
+            color: var(--deep-rose);
+        }
+
+        .close-menu {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-dark);
+        }
+
+        /* 动画定义 */
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+
+            .navbar {
+                padding: 1rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .container {
+                padding: 80px 1rem 1rem;
+            }
+
+            .memories-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .add-memory-form {
+                padding: 1.5rem;
+            }
+
+            .submit-btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">My Love</a>
+        <ul class="nav-links">
+            <li><a href="index.html" class="nav-link">首页</a></li>
+            <li><a href="memories.html" class="nav-link">回忆相册</a></li>
+            <li><a href="messages.html" class="nav-link">爱情留言</a></li>
+        </ul>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+    </nav>
+
+    <!-- 移动端导航菜单 -->
+    <div class="mobile-nav" id="mobileNav">
+        <button class="close-menu" onclick="toggleMobileMenu()">
+            <i class="fas fa-times"></i>
+        </button>
+        <ul class="mobile-nav-links">
+            <li><a href="index.html" class="mobile-nav-link" onclick="toggleMobileMenu()">首页</a></li>
+            <li><a href="memories.html" class="mobile-nav-link" onclick="toggleMobileMenu()">回忆相册</a></li>
+            <li><a href="messages.html" class="mobile-nav-link" onclick="toggleMobileMenu()">爱情留言</a></li>
+        </ul>
+    </div>
+
+    <!-- 主要内容 -->
+    <div class="container">
+        <h1 class="page-title">我们的美好回忆</h1>
+        
+        <!-- 添加回忆表单 -->
+        <form class="add-memory-form" id="addMemoryForm">
+            <div class="form-group">
+                <label for="memoryTitle" class="form-label">回忆标题</label>
+                <input type="text" id="memoryTitle" class="form-input" placeholder="为这个回忆起个名字..." required>
+            </div>
+            <div class="form-group">
+                <label for="memoryDate" class="form-label">日期</label>
+                <input type="date" id="memoryDate" class="form-input" required>
+            </div>
+            <div class="form-group">
+                <label for="memoryDescription" class="form-label">描述</label>
+                <textarea id="memoryDescription" class="form-input form-textarea" placeholder="描述这个美好的时刻..." required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="memoryImage" class="form-label">上传照片</label>
+                <input type="file" id="memoryImage" class="form-input" accept="image/*">
+            </div>
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-plus"></i> 添加回忆
+            </button>
+        </form>
+
+        <!-- 回忆相册网格 -->
+        <div class="memories-grid" id="memoriesGrid">
+            <!-- 回忆卡片会动态添加到这里 -->
+        </div>
+    </div>
+
+    <script>
+        // 移动端菜单切换
+        function toggleMobileMenu() {
+            const mobileNav = document.getElementById('mobileNav');
+            mobileNav.classList.toggle('active');
+        }
+
+        // 点击导航链接时关闭移动菜单
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                const mobileNav = document.getElementById('mobileNav');
+                mobileNav.classList.remove('active');
+            });
+        });
+
+        // 图片点击放大功能
+        document.querySelectorAll('.memory-image').forEach(img => {
+            img.addEventListener('click', function() {
+                const overlay = document.createElement('div');
+                overlay.className = 'image-overlay';
+                overlay.innerHTML = `
+                    <div class="overlay-content">
+                        <img src="${this.src}" alt="${this.alt}">
+                        <button class="close-btn" onclick="this.parentElement.parentElement.remove()">×</button>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+            });
+        });
+
+        // 添加回忆表单处理
+        document.getElementById('addMemoryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('memoryTitle').value.trim();
+            const date = document.getElementById('memoryDate').value;
+            const description = document.getElementById('memoryDescription').value.trim();
+            const imageFile = document.getElementById('memoryImage').files[0];
+            
+            if (!title || !date || !description) {
+                alert('请填写所有必填字段！');
+                return;
+            }
+            
+            let imageUrl = 'memory-collage.png'; // 默认图片
+            
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imageUrl = e.target.result;
+                    addMemoryCard(title, date, description, imageUrl);
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                addMemoryCard(title, date, description, imageUrl);
+            }
+            
+            // 清空表单
+            document.getElementById('addMemoryForm').reset();
+            
+            // 显示成功提示
+            const submitBtn = document.querySelector('#addMemoryForm button');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = '回忆添加成功！';
+            submitBtn.style.background = 'linear-gradient(135deg, #4CAF50, #45a049)';
+            
+            setTimeout(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.style.background = 'linear-gradient(135deg, #e8b4b8, #d4a5a5)';
+            }, 2000);
+        });
+
+        // 添加回忆卡片函数
+        function addMemoryCard(title, date, description, imageUrl) {
+            const memoryCard = document.createElement('div');
+            memoryCard.className = 'memory-card';
+            memoryCard.innerHTML = `
+                <img src="${imageUrl}" alt="${title}" class="memory-image">
+                <div class="memory-info">
+                    <h3 class="memory-title">${title}</h3>
+                    <div class="memory-date">${new Date(date).toLocaleDateString('zh-CN')}</div>
+                    <p class="memory-description">${description}</p>
+                </div>
+            `;
+            
+            // 添加动画效果
+            memoryCard.style.opacity = '0';
+            memoryCard.style.transform = 'translateY(20px)';
+            
+            // 插入到回忆网格顶部
+            const memoriesGrid = document.getElementById('memoriesGrid');
+            memoriesGrid.insertBefore(memoryCard, memoriesGrid.firstChild);
+            
+            // 显示动画
+            setTimeout(() => {
+                memoryCard.style.transition = 'all 0.5s ease';
+                memoryCard.style.opacity = '1';
+                memoryCard.style.transform = 'translateY(0)';
+            }, 100);
+            
+            // 为图片添加点击放大功能
+            const newImage = memoryCard.querySelector('.memory-image');
+            newImage.addEventListener('click', function() {
+                const overlay = document.createElement('div');
+                overlay.className = 'image-overlay';
+                overlay.innerHTML = `
+                    <div class="overlay-content">
+                        <img src="${this.src}" alt="${this.alt}">
+                        <button class="close-btn" onclick="this.parentElement.parentElement.remove()">×</button>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+            });
+        }
+
+        // 页面加载动画
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
