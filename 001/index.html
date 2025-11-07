@@ -4,9 +4,14 @@
             const birthday = new Date('2025-11-08');
             const now = new Date();
             
+            console.log('当前时间:', now);
+            console.log('生日时间:', birthday);
+            console.log('时间差(毫秒):', birthday - now);
+            
             // 如果生日已经过去，计算下一个生日
             if (now > birthday) {
                 birthday.setFullYear(birthday.getFullYear() + 1);
+                console.log('生日已过，计算下一年生日:', birthday);
             }
             
             const diff = birthday - now;
@@ -14,6 +19,8 @@
             const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            console.log('计算的天数:', days);
             
             document.getElementById('countdown').textContent = 
                 `距离你的生日还有：${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒`;
