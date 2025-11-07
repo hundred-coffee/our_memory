@@ -162,14 +162,18 @@ class PageAnimator {
     }
     
     startCountdown() {
-        // Set birthday date (tomorrow for demo)
-        const birthday = new Date();
-        birthday.setDate(birthday.getDate() + 1);
-        birthday.setHours(0, 0, 0, 0);
+        // Set birthday date to tomorrow (November 8th, 2025)
+        const birthday = new Date(2025, 10, 8, 0, 0, 0); // Month is 0-indexed (10 = November)
         
         const updateCountdown = () => {
             const now = new Date().getTime();
             const distance = birthday.getTime() - now;
+            
+            if (distance <= 0) {
+                // Countdown finished - show birthday celebration
+                this.showBirthdayCelebration();
+                return;
+            }
             
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -192,6 +196,130 @@ class PageAnimator {
         
         updateCountdown();
         setInterval(updateCountdown, 1000);
+    }
+    
+    showBirthdayCelebration() {
+        // Update countdown display
+        document.getElementById('days').textContent = '00';
+        document.getElementById('hours').textContent = '00';
+        document.getElementById('minutes').textContent = '00';
+        document.getElementById('seconds').textContent = '00';
+        
+        // Change countdown title
+        const countdownTitle = document.querySelector('#countdown-card h3');
+        countdownTitle.textContent = '🎉 生日快乐！ 🎉';
+        countdownTitle.style.color = '#FF69B4';
+        countdownTitle.style.fontSize = '2.5rem';
+        
+        // Create massive celebration effect
+        this.createBirthdayExplosion();
+        
+        // Show special birthday message
+        setTimeout(() => {
+            this.showSpecialBirthdayMessage();
+        }, 2000);
+        
+        // Auto-light the candle
+        setTimeout(() => {
+            this.autoLightCandle();
+        }, 4000);
+    }
+    
+    createBirthdayExplosion() {
+        // Create massive particle explosion
+        for (let i = 0; i < 200; i++) {
+            particles.push({
+                x: windowWidth / 2,
+                y: windowHeight / 2,
+                vx: random(-15, 15),
+                vy: random(-15, 15),
+                size: random(10, 30),
+                opacity: 1,
+                color: random(['#FF69B4', '#FF1493', '#FFD700', '#FFB6C1', '#FF6347', '#FF4500'])
+            });
+        }
+        
+        // Add floating hearts
+        for (let i = 0; i < 100; i++) {
+            hearts.push({
+                x: random(width),
+                y: height + 50,
+                size: random(20, 50),
+                speed: random(2, 5),
+                opacity: random(0.5, 1),
+                color: random(['#FF69B4', '#FF1493', '#FFD700', '#FFB6C1'])
+            });
+        }
+        
+        // Animate background color change
+        anime({
+            targets: 'body',
+            backgroundColor: ['#1a1a2e', '#FF69B4'],
+            duration: 2000,
+            easing: 'easeInOutQuad'
+        });
+    }
+    
+    showSpecialBirthdayMessage() {
+        const specialMessages = [
+            "🎂 生日快乐！愿你的每一天都充满阳光和欢笑！",
+            "💝 你是我生命中最珍贵的礼物，生日快乐我的爱人！",
+            "✨ 愿你的生日像你一样美丽动人，充满惊喜和快乐！",
+            "🎁 生日快乐！愿你的每一个愿望都能实现！",
+            "❤️ 爱你比昨天更多，但不及明天！生日快乐！"
+        ];
+        
+        const randomMessage = specialMessages[Math.floor(Math.random() * specialMessages.length)];
+        
+        // Create floating message
+        const messageDiv = document.createElement('div');
+        messageDiv.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            font-size: 2rem;
+            font-weight: bold;
+            color: #FF69B4;
+            text-align: center;
+            z-index: 1000;
+            border: 3px solid #FFD700;
+        `;
+        messageDiv.textContent = randomMessage;
+        document.body.appendChild(messageDiv);
+        
+        // Animate message
+        anime({
+            targets: messageDiv,
+            scale: [0, 1.2, 1],
+            rotate: [-10, 10, 0],
+            duration: 1500,
+            easing: 'easeOutElastic(1, .8)',
+            complete: () => {
+                setTimeout(() => {
+                    anime({
+                        targets: messageDiv,
+                        opacity: [1, 0],
+                        scale: [1, 0.5],
+                        duration: 1000,
+                        complete: () => {
+                            document.body.removeChild(messageDiv);
+                        }
+                    });
+                }, 3000);
+            }
+        });
+    }
+    
+    autoLightCandle() {
+        const candleButton = document.querySelector('#cake-section button');
+        if (candleButton && !candleButton.disabled) {
+            candleButton.click();
+        }
     }
     
     setupInteractions() {
