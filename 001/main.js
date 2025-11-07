@@ -162,8 +162,8 @@ class PageAnimator {
     }
     
     startCountdown() {
-        // Set birthday date to tomorrow (November 8th, 2025)
-        const birthday = new Date(2025, 10, 8, 0, 0, 0); // Month is 0-indexed (10 = November)
+        // Set birthday date to December 25th, 2025 (Christmas Day)
+        const birthday = new Date(2025, 11, 25, 0, 0, 0); // Month is 0-indexed (11 = December)
         console.log('Birthday date:', birthday);
         console.log('Current date:', new Date());
         
